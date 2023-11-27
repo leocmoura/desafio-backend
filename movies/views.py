@@ -1,15 +1,12 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from django.http import Http404
-from django.db.models import Q, Avg
+from django.db.models import Avg
 from rest_framework import filters
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import generics
 from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from movies.models import Movie
 from movies.serializers import MovieSerializer, RecommendedMovieSerializer
-from ranking.models import Ranking
-from ranking.repository import calculate_movie_ratings
 from movies.permissions import IsOwnerOrReadOnly
 
 class MyCustomPagination(PageNumberPagination):
