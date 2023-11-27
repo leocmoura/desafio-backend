@@ -24,7 +24,7 @@ class UserRateMovieView(CreateAPIView):
        
         movie = ranking_instance.movie
         if movie.user != user:
-            message = f'Your movie "{movie.title}" has been rated by {user}.'
+            message = f'Your movie "{movie.title}" was rated by {user}.'
             notification = Notification.objects.create(user=movie.user, movie=movie, message=message)
 
         return Response(self.serializer_class(instance=ranking_instance).data, status=status.HTTP_201_CREATED)
