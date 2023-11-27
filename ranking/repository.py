@@ -1,8 +1,7 @@
 from django.http import Http404
-from django.db.models import Avg, Q
+from django.db.models import Avg
 from movies.models import Movie
 from ranking.models import Ranking, Comment
-from ranking.serializers import CommentSerializer
 
 def create_ranking_instance(user, movie_id, rating, comment=None):
     try:
