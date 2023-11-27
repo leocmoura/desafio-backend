@@ -4,6 +4,7 @@ from movies.models import Movie
 
 class Notification(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='notifications')
+    evaluator = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     message = models.TextField()
     read = models.BooleanField(default=False)

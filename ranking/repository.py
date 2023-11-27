@@ -1,7 +1,9 @@
 from django.http import Http404
+from django.utils import timezone
 from django.db.models import Avg
 from movies.models import Movie
 from ranking.models import Ranking, Comment
+from notification.models import Notification
 
 def create_ranking_instance(user, movie_id, rating, comment=None):
     try:
@@ -15,9 +17,22 @@ def create_ranking_instance(user, movie_id, rating, comment=None):
         defaults={"personal_rating":rating},
     )
 
+    # import debugpy
+    # debugpy.listen(5678)
+    # debugpy.wait_for_client()
+
+    if not created and (ranking_instance.personal_rating != rating or ranking_instance.comment.text != comment):
+        notification = Notification.objects.filter(evaluator=user, movie=movie_id).first()
+        if notification:
+            notification.read = False
+            notification.created_in = timezone.now()
+            notification.save()
+
     if created:
         comment = Comment.objects.create(text=comment)
         ranking_instance.comment = comment
+        message = f'Your movie "{movie.title}" was rated by {user}.'
+        Notification.objects.create(user=movie.user, evaluator=user, movie=movie, message=message)
     else:
         if not ranking_instance.comment:
             comment_model = Comment.objects.create(text=comment) 
