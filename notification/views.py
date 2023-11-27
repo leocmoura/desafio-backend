@@ -8,7 +8,6 @@ class NotificationListView(ListAPIView):
     serializer_class = NotificationSerializer
     permission_classes = [IsAuthenticated]
 
-
     def get_queryset(self):
         user = self.request.user
         return Notification.objects.filter(user=user, read=False)
@@ -16,7 +15,6 @@ class NotificationListView(ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
-
 
         return Response(serializer.data)
     
