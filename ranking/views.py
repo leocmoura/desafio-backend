@@ -7,6 +7,7 @@ from rest_framework import status
 from ranking.models import Ranking, Comment
 from ranking.serializers import UserRateMovieSerializer, UserRankingListSerializer, GeneralMovieRatingSerializer, CommentSerializer, CommentListSerializer
 from ranking.repository import create_ranking_instance, calculate_movie_ratings
+from notification.models import Notification
 
 class UserRateMovieView(CreateAPIView):
     queryset = Ranking.objects.all()
@@ -21,6 +22,11 @@ class UserRateMovieView(CreateAPIView):
 
         ranking_instance = create_ranking_instance(user, movie_id, rating, comment=comment_text)
        
+        movie = ranking_instance.movie
+        if movie.user != user:
+            message = f'Your movie "{movie.title}" has been evaluated for {user}.'
+            notification = Notification.objects.create(user=movie.user, movie=movie, message=message)
+
         return Response(self.serializer_class(instance=ranking_instance).data, status=status.HTTP_201_CREATED)
 
 class UserRankingListView(generics.ListAPIView):
