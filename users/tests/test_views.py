@@ -45,11 +45,7 @@ class UserRegistrationViewTest(APITestCase):
 
         response_duplicate = self.client.post(self.url, data, format='json')
         self.assertEqual(response_duplicate.status_code, status.HTTP_400_BAD_REQUEST)
-
-        expected_response = {
-            'email': ['user with this email already exists.']
-        }
-        self.assertEqual(json.loads(response_duplicate.content), expected_response)
+        self.assertEqual(response_duplicate.data, {'email': ['user with this email already exists.']})
         self.assertEqual(CustomUser.objects.count(), 1)
 
 
@@ -62,11 +58,7 @@ class UserRegistrationViewTest(APITestCase):
 
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        expected_response = {
-            'email': ['This field may not be blank.']
-        }
-        self.assertEqual(json.loads(response.content), expected_response)
+        self.assertEqual(response.data, {'email': ['This field may not be blank.']})
 
     
     def test_user_registration_failure_password_small(self):
@@ -78,11 +70,7 @@ class UserRegistrationViewTest(APITestCase):
 
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        expected_response = {
-                'non_field_errors': ["This password is too short. It must contain at least 8 characters."]
-        }
-        self.assertEqual(json.loads(response.content), expected_response)
+        self.assertEqual(response.data, {'non_field_errors': ["This password is too short. It must contain at least 8 characters."]})
         
 
     def test_user_registration_failure_password_different(self):
@@ -94,11 +82,9 @@ class UserRegistrationViewTest(APITestCase):
 
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'non_field_errors': ['Passwords do not match.']})
 
-        expected_response = {
-                'non_field_errors': ["Passwords do not match."]
-        }
-        self.assertEqual(json.loads(response.content), expected_response)
+
 
 class UserLoginViewTest(APITestCase):
     def setUp(self):
