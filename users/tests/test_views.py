@@ -100,5 +100,42 @@ class UserRegistrationViewTest(APITestCase):
         }
         self.assertEqual(json.loads(response.content), expected_response)
 
+class UserLoginViewTest(APITestCase):
+    def setUp(self):
+        self.url = reverse('login')
+        self.user_data = {
+            'email': 'testloginuser@teste.com',
+            'username': 'testloginuser@teste.com',
+            'password': 'testpassword'
+        }
+        self.user = CustomUser.objects.create_user(**self.user_data)
+        self.valid_credentials = {
+            'username': 'testloginuser@teste.com',
+            'password': 'testpassword'
+        }
+        self.invalid_credentials = {
+            'username': 'testloginuser@teste.com',
+            'password': 'wrongtestpassword'
+        }
+        self.empty_credentials = {
+            'username': '',
+            'password': ''
+        }
 
-    
+
+    def test_user_login_success(self):
+        response = self.client.post(self.url, self.valid_credentials, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'message': 'Login successfully.'})
+
+
+    def test_user_login_invalid(self):
+        response = self.client.post(self.url, self.invalid_credentials, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data, {'message': 'Invalid credentials.'})
+
+
+    def test_user_login_empty(self):
+        response = self.client.post(self.url, self.empty_credentials, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.data, {'message': 'Invalid credentials.'})
