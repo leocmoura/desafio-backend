@@ -8,11 +8,17 @@ from users.serializers import UserRegistrationSerializer
 class UserRegistrationViewTest(APITestCase):
     def setUp(self):
         self.url = reverse('register')
+        self.user_data = {
+            'email': 'testuser@teste.com',
+            'username': 'testuser@teste.com',
+            'password': ' testpassword',
+        }
+        self.user = CustomUser.objects.create_user(**self.user_data)
 
     
     def test_user_registration_sucess(self):
         data = {
-            'email': 'testuser@example.com',
+            'email': 'registrationuser@teste.com',
             'password': 'testpassword',
             'password_confirm': 'testpassword'
         }
@@ -20,7 +26,7 @@ class UserRegistrationViewTest(APITestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        user = CustomUser.objects.get(username='testuser@example.com')
+        user = CustomUser.objects.get(username='registrationuser@teste.com')
         self.assertIsNotNone(user)
 
         expected_response = {
@@ -37,9 +43,6 @@ class UserRegistrationViewTest(APITestCase):
             'password_confirm': 'uniquepass'
         }
 
-        response = self.client.post(self.url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
         response_duplicate = self.client.post(self.url, data, format='json')
         self.assertEqual(response_duplicate.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -48,6 +51,7 @@ class UserRegistrationViewTest(APITestCase):
         }
         self.assertEqual(json.loads(response_duplicate.content), expected_response)
         self.assertEqual(CustomUser.objects.count(), 1)
+
 
     def test_user_registration_failure_email(self):
         data = {
@@ -67,7 +71,7 @@ class UserRegistrationViewTest(APITestCase):
     
     def test_user_registration_failure_password_small(self):
         data = {
-            'email': 'testuser@example.com',
+            'email': 'testusershortpassword@example.com',
             'password': 'short',
             'password_confirm': 'short'
         }
@@ -80,9 +84,10 @@ class UserRegistrationViewTest(APITestCase):
         }
         self.assertEqual(json.loads(response.content), expected_response)
         
+
     def test_user_registration_failure_password_different(self):
         data = {
-            'email': 'testuser@example.com',
+            'email': 'testuserdifferentpassword@example.com',
             'password': 'invalidpassword',
             'password_confirm': 'different'
         }
@@ -94,5 +99,6 @@ class UserRegistrationViewTest(APITestCase):
                 'non_field_errors': ["Passwords do not match."]
         }
         self.assertEqual(json.loads(response.content), expected_response)
+
 
     
