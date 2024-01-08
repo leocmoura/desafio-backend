@@ -29,4 +29,12 @@ class UserRegistrationViewTest(APITestCase):
         }
         self.assertEqual(json.loads(response.content), expected_response)
 
-    # def test_user_
+    def test_user_registration_failure(self):
+        data = {
+            'email': '',
+            'password': 'invalid',
+            'password_confirm': 'short'
+        }
+
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
