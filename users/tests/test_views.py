@@ -29,6 +29,26 @@ class UserRegistrationViewTest(APITestCase):
         }
         self.assertEqual(json.loads(response.content), expected_response)
 
+
+    def test_user_unique_email(self):
+        data = {
+            'email': 'testuser@teste.com',
+            'password': 'uniquepass',
+            'password_confirm': 'uniquepass'
+        }
+
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        response_duplicate = self.client.post(self.url, data, format='json')
+        self.assertEqual(response_duplicate.status_code, status.HTTP_400_BAD_REQUEST)
+
+        expected_response = {
+            'email': ['user with this email already exists.']
+        }
+        self.assertEqual(json.loads(response_duplicate.content), expected_response)
+        self.assertEqual(CustomUser.objects.count(), 1)
+
     def test_user_registration_failure_email(self):
         data = {
             'email': '',
@@ -74,3 +94,5 @@ class UserRegistrationViewTest(APITestCase):
                 'non_field_errors': ["Passwords do not match."]
         }
         self.assertEqual(json.loads(response.content), expected_response)
+
+    
