@@ -85,7 +85,6 @@ class UserRegistrationViewTest(APITestCase):
         self.assertEqual(response.data, {'non_field_errors': ['Passwords do not match.']})
 
 
-
 class UserLoginViewTest(APITestCase):
     def setUp(self):
         self.url = reverse('login')
@@ -125,3 +124,31 @@ class UserLoginViewTest(APITestCase):
         response = self.client.post(self.url, self.empty_credentials, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(response.data, {'message': 'Invalid credentials.'})
+
+
+class UserLogoutViewTest(APITestCase):
+    def setUp(self):
+        self.url_login = reverse('login')
+        self.url = reverse('logout')
+        self.user_data = {
+            # 'email': 'testlogoutuser@test.com',
+            'username': 'testlogoutuser@test.com',
+            'password': 'testlogoutpassword'
+        }
+        self.user = CustomUser.objects.create(**self.user_data)
+        self.client.login(username=self.user_data['username'], password=self.user_data['password'])
+
+
+    def test_user_logout_authenticated(self):
+        self.assertTrue(self.user.is_authenticated)
+
+        response = self.client.get(self.url)
+        self.client.logout()
+
+        self.assertFalse(self.user.is_authenticated)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'message': 'Logout successfully.'})
+
+
+# class UserProfileViewTest(APITestCase):
