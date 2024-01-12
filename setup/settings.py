@@ -78,6 +78,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'setup.wsgi.application'
 
+import dj_database_url
+
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         # Feel free to alter this value to suit your needs.
+#         default='postgresql://postgres:postgres@localhost:5432/mysite',
+#         conn_max_age=600
+#     )
+# }
 
 DATABASES = {
     'default': {
@@ -85,8 +94,9 @@ DATABASES = {
         'NAME': 'desafio_backend',
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5432'
+        # 'HOST': 'localhost',
+        'HOST': 'postgres://leocmoura:w6IQRo5XUbWM9PKkgFEiEeV9huMRQfhM@dpg-cmgkelgl5elc73fv4m3g-a/filmrankdb',
+        # 'PORT': '5432'
     }
 }
 
