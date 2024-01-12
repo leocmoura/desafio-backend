@@ -1,0 +1,6 @@
+services:
+  - name: web
+    envVars:
+      - key: PORT
+        value: 8000
+    startCommand: gunicorn -b 0.0.0.0:$PORT seu_projeto.wsgi:application
