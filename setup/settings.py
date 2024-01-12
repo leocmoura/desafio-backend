@@ -78,27 +78,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'setup.wsgi.application'
 
-# import dj_database_url
-
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         # Feel free to alter this value to suit your needs.
-#         default='postgresql://postgres:postgres@localhost:5432/mysite',
-#         conn_max_age=600
-#     )
-# }
+import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'desafio_backend',
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        # 'HOST': 'localhost',
-        'HOST': 'postgres://leocmoura:w6IQRo5XUbWM9PKkgFEiEeV9huMRQfhM@dpg-cmgkelgl5elc73fv4m3g-a/filmrankdb',
-        # 'PORT': '5432'
-    }
+    'default': dj_database_url.config(
+        # Feel free to alter this value to suit your needs.
+        default='postgres://leocmoura:w6IQRo5XUbWM9PKkgFEiEeV9huMRQfhM@dpg-cmgkelgl5elc73fv4m3g-a/filmrankdb',
+        conn_max_age=600
+    )
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'desafio_backend',
+#         'USER': os.getenv('DATABASE_USER'),
+#         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+#         # 'HOST': 'localhost',
+#         'HOST': 'postgres://leocmoura:w6IQRo5XUbWM9PKkgFEiEeV9huMRQfhM@dpg-cmgkelgl5elc73fv4m3g-a/filmrankdb',
+#         # 'PORT': '5432'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
