@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = ['film-rank.onrender.com', 'localhost']
-CSRF_TRUSTED_ORIGINS = ['film-rank.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://film-rank.onrender.com']
 
 # Application definition
 
