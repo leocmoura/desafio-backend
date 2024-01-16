@@ -11,7 +11,7 @@ schema_view = get_schema_view(
       description="Movies catalog and classification.",
       terms_of_service="#",
       contact=openapi.Contact(email="email@email.com"),
-      license=openapi.License(name="BSD License"),
+      license=openapi.License(name="#"),
    ),
    public=True,
 )
