@@ -90,12 +90,11 @@ DATABASES = {'default': dj_database_url.config(default=os.getenv('DATABASE_URL')
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'desafio_backend',
+#         'NAME': 'postgres',
 #         'USER': os.getenv('DATABASE_USER'),
 #         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-#         # 'HOST': 'localhost',
-#         'HOST': 'postgres://leocmoura:w6IQRo5XUbWM9PKkgFEiEeV9huMRQfhM@dpg-cmgkelgl5elc73fv4m3g-a/filmrankdb',
-#         # 'PORT': '5432'
+#         'HOST': 'localhost',
+#         'PORT': '5432'
 #     }
 # }
 
