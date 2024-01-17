@@ -17,10 +17,6 @@ def create_ranking_instance(user, movie_id, rating, comment=None):
         defaults={"personal_rating":rating},
     )
 
-    import debugpy
-    debugpy.listen(5678)
-    debugpy.wait_for_client()
-
     if created:
         comment = Comment.objects.create(text=comment)
         ranking_instance.comment = comment
