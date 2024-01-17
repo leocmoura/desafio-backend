@@ -4,17 +4,18 @@ from rest_framework import generics
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
-from ranking.models import Ranking, Comment
-from ranking.serializers import UserRateMovieSerializer, UserRankingListSerializer, GeneralMovieRatingSerializer, CommentSerializer, CommentListSerializer
+from ranking.models import Ranking
+from ranking.serializers import UserRateMovieSerializer, UserRankingListSerializer, GeneralMovieRatingSerializer, CommentListSerializer
 from ranking.repository import create_ranking_instance, calculate_movie_ratings
-from notification.models import Notification
 
 class UserRateMovieView(CreateAPIView):
     queryset = Ranking.objects.all()
     serializer_class = UserRateMovieSerializer
     permission_classes = [IsAuthenticated]
 
+
     def post(self, request, *args, **kwargs):
+        
         user = request.user
         movie_id = request.data.get('movie')
         rating = int(request.data.get('personal_rating'))
