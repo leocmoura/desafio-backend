@@ -1,7 +1,6 @@
 import json
 from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 from django.urls import reverse
 from users.models import CustomUser
 from users.serializers import UserRegistrationSerializer
@@ -11,7 +10,7 @@ class UserRegistrationViewTest(APITestCase):
         self.url = reverse('register')
         self.user_data = {
             'email': 'testuser@teste.com',
-            'username': 'testuser@teste.com',
+            'username': 'testuser',
             'password': ' testpassword',
         }
         self.user = CustomUser.objects.create_user(**self.user_data)
@@ -20,6 +19,7 @@ class UserRegistrationViewTest(APITestCase):
     def test_user_registration_sucess(self):
         data = {
             'email': 'registrationuser@teste.com',
+            'username': 'registrationuser',
             'password': 'testpassword',
             'password_confirm': 'testpassword'
         }
@@ -27,7 +27,7 @@ class UserRegistrationViewTest(APITestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        user = CustomUser.objects.get(username='registrationuser@teste.com')
+        user = CustomUser.objects.get(username='registrationuser')
         self.assertIsNotNone(user)
 
         expected_response = {
@@ -40,6 +40,7 @@ class UserRegistrationViewTest(APITestCase):
     def test_user_unique_email(self):
         data = {
             'email': 'testuser@teste.com',
+            'username': 'newusername',
             'password': 'uniquepass',
             'password_confirm': 'uniquepass'
         }
@@ -49,22 +50,48 @@ class UserRegistrationViewTest(APITestCase):
         self.assertEqual(response_duplicate.data, {'email': ['user with this email already exists.']})
         self.assertEqual(CustomUser.objects.count(), 1)
 
+    def test_user_unique_username(self):
+        data = {
+            'email': 'newusername@teste.com',
+            'username': 'testuser',
+            'password': 'uniquepass',
+            'password_confirm': 'uniquepass'
+        }
+
+        response_duplicate = self.client.post(self.url, data, format='json')
+        self.assertEqual(response_duplicate.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response_duplicate.data, {'username': ['A user with that username already exists.']})
+        self.assertEqual(CustomUser.objects.count(), 1)
+
 
     def test_user_registration_failure_email(self):
         data = {
             'email': '',
+            'username': 'username',
             'password': 'blank',
             'password_confirm': 'blank'
         }
 
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data, {'email': ['This field may not be blank.']})
+        self.assertEqual(response.data, {"email":["This field may not be blank."]})
 
+    def test_user_registration_failure_username(self):
+        data = {
+            'email': 'email@email.com',
+            'username': '',
+            'password': 'blank',
+            'password_confirm': 'blank'
+        }
+
+        response = self.client.post(self.url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data, {'username':['This field may not be blank.']})
     
     def test_user_registration_failure_password_small(self):
         data = {
             'email': 'testusershortpassword@example.com',
+            'username': 'testusershorpassword',
             'password': 'short',
             'password_confirm': 'short'
         }
@@ -77,6 +104,7 @@ class UserRegistrationViewTest(APITestCase):
     def test_user_registration_failure_password_different(self):
         data = {
             'email': 'testuserdifferentpassword@example.com',
+            'username': 'testuserdifferentpassword',
             'password': 'invalidpassword',
             'password_confirm': 'different'
         }
