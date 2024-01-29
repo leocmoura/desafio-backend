@@ -164,9 +164,8 @@ class UserLogoutViewTest(APITestCase):
             'username': 'testlogoutuser',
             'password': 'testlogoutpassword'
         }
-        self.user = CustomUser.objects.create_user(**self.user_data)
+        self.user = CustomUser.objects.create(**self.user_data)
 
-        self.client = APIClient()
         self.client.login(username=self.user_data['username'], password=self.user_data['password'])
 
     def test_user_logout_authenticated(self):
