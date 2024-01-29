@@ -1,6 +1,6 @@
 import json
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from django.urls import reverse
 from users.models import CustomUser
 from users.serializers import UserRegistrationSerializer
@@ -161,26 +161,21 @@ class UserLogoutViewTest(APITestCase):
         self.url = reverse('logout')
         self.user_data = {
             'email': 'testlogoutuser@test.com',
-            'username': 'testlogoutuser@test.com',
+            'username': 'testlogoutuser',
             'password': 'testlogoutpassword'
         }
-        self.user = CustomUser.objects.create(**self.user_data)
-        self.client.login(username=self.user_data['username'], password=self.user_data['password'])
+        self.user = CustomUser.objects.create_user(**self.user_data)
 
-        # token = Token.objects.get(user__username='testlogoutuser@test.com')
-        # client = APIClient()
-        # client.credentials(HTTP_AUTHORIZATION='Token ' + token.key)
+        self.client = APIClient()
+        self.client.login(username=self.user_data['username'], password=self.user_data['password'])
 
     def test_user_logout_authenticated(self):
         self.assertTrue(self.user.is_authenticated)
 
-
         response = self.client.get(self.url, self.user_data, format='json')
 
-        # self.assertFalse(self.user.is_authenticated)
-
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, {'message': 'Logout successfully.'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, {'message': 'Logout successfully completed.'})
 
 
 # class UserProfileViewTest(APITestCase):
