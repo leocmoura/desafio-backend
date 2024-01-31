@@ -1,9 +1,9 @@
 import json
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APITestCase
 from django.urls import reverse
 from users.models import CustomUser
-from users.serializers import UserRegistrationSerializer
+from users.serializers import UserRegistrationSerializer, UserProfileSerializer
 
 class UserRegistrationViewTest(APITestCase):
     def setUp(self):
@@ -177,4 +177,22 @@ class UserLogoutViewTest(APITestCase):
         self.assertEqual(response.data, {'message': 'Logout successfully completed.'})
 
 
-# class UserProfileViewTest(APITestCase):
+class UserProfileViewTest(APITestCase):
+    def setUp(self):
+        self.url = reverse('profile')
+        self.user_data = {
+            'email': 'testprofile@test.com',
+            'username': 'testprofile',
+            'password': 'testprofilepassword'
+        }
+        self.user = CustomUser.objects.create_user(**self.user_data)
+
+        self.client.login(username=self.user_data['username'], password=self.user_data['password'])
+    
+    def test_user_profile(self):
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        serializer = UserProfileSerializer(instance=self.user)
+        self.assertEqual(response.data, serializer.data)
+        
